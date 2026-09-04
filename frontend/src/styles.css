@@ -51,3 +51,16 @@ textarea {
     max-height: 420px;
   }
 }
+
+.feed-shell::-webkit-scrollbar {
+  width: 5px;
+}
+
+.feed-shell::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.feed-shell::-webkit-scrollbar-thumb {
+  background: #cfcfcf;
+  border-radius: 10px;
+}

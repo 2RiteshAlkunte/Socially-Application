@@ -296,243 +296,296 @@ export default function PostCard({ post, onUpdated }) {
       )}
 
       {/* LIKE / COMMENT COUNTS */}
-      <CardContent
-        sx={{
-          px: 2,
-          pt: 1.25,
-          pb: 0.75,
-        }}
-      >
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Stack direction="row" spacing={2}>
-            <Typography
-              sx={{
-                fontSize: "12px",
-                color: "#777",
-              }}
-            >
-              {post.likes.length}{" "}
-              {post.likes.length === 1 ? "like" : "likes"}
-            </Typography>
-
-            <Typography
-              sx={{
-                fontSize: "12px",
-                color: "#777",
-              }}
-            >
-              {post.comments.length}{" "}
-              {post.comments.length === 1
-                ? "comment"
-                : "comments"}
-            </Typography>
-          </Stack>
-        </Stack>
-
-        <Divider sx={{ mt: 1 }} />
-
-        {/* ACTIONS */}
-        <Stack
-          direction="row"
+<CardContent
+  sx={{
+    px: 2,
+    pt: 1,
+    pb: 1,
+  }}
+>
+  <Stack
+    direction="row"
+    alignItems="center"
+    justifyContent="space-between"
+  >
+    {/* LIKE */}
+    <Button
+      onClick={handleLike}
+      disabled={likeLoading}
+      sx={{
+        minWidth: 0,
+        p: 0,
+        color: liked ? "#ff2da1" : "#666",
+        textTransform: "none",
+        fontSize: "13px",
+        fontWeight: 500,
+        justifyContent: "flex-start",
+        gap: 0.5,
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+      }}
+    >
+      {liked ? (
+        <FavoriteIcon
           sx={{
-            mt: 0.25,
+            fontSize: 21,
+            color: "#ff2da1",
+          }}
+        />
+      ) : (
+        <FavoriteBorderIcon
+          sx={{
+            fontSize: 21,
+            color: "#777",
+          }}
+        />
+      )}
+
+      <span>{post.likes.length}</span>
+    </Button>
+
+    {/* COMMENTS */}
+    <Button
+      onClick={() =>
+        setShowComments((value) => !value)
+      }
+      sx={{
+        minWidth: 0,
+        p: 0,
+        color: "#666",
+        textTransform: "none",
+        fontSize: "13px",
+        fontWeight: 500,
+        gap: 0.5,
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+      }}
+    >
+      <CommentIcon
+        sx={{
+          fontSize: 20,
+          color: "#1976d2",
+        }}
+      />
+
+      <span>{post.comments.length}</span>
+    </Button>
+
+    {/* SHARE */}
+    <Button
+      sx={{
+        minWidth: 0,
+        p: 0,
+        color: "#666",
+        textTransform: "none",
+        fontSize: "13px",
+        fontWeight: 500,
+        gap: 0.5,
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+      }}
+    >
+      <ShareIcon
+        sx={{
+          fontSize: 20,
+          color: "#777",
+        }}
+      />
+
+      <span>0</span>
+    </Button>
+  </Stack>
+
+  {/* ERROR */}
+  {error && (
+    <Alert
+      severity="error"
+      sx={{
+        mt: 1,
+        fontSize: "12px",
+      }}
+    >
+      {error}
+    </Alert>
+  )}
+
+  {/* COMMENTS */}
+  {showComments && (
+    <Box
+      sx={{
+        mt: 1.5,
+        pt: 1.5,
+        borderTop: "1px solid #eee",
+      }}
+    >
+      {/* COMMENT INPUT */}
+      <Stack
+        direction="row"
+        spacing={1}
+        alignItems="center"
+      >
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Write a comment..."
+          value={commentText}
+          onChange={(e) =>
+            setCommentText(e.target.value)
+          }
+          onKeyDown={(e) => {
+            if (
+              e.key === "Enter" &&
+              !e.shiftKey
+            ) {
+              e.preventDefault();
+              handleComment();
+            }
+          }}
+          inputProps={{
+            maxLength: 500,
+          }}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "22px",
+              backgroundColor: "#f1f3f6",
+              fontSize: "13px",
+
+              "& fieldset": {
+                border: "none",
+              },
+            },
+          }}
+        />
+
+        <Button
+          variant="contained"
+          onClick={handleComment}
+          disabled={
+            !commentText.trim() ||
+            submittingComment
+          }
+          sx={{
+            minWidth: "66px",
+            height: "40px",
+            borderRadius: "20px",
+            textTransform: "none",
+            backgroundColor: "#1976d2",
+
+            "&:hover": {
+              backgroundColor: "#1565c0",
+            },
           }}
         >
-          <Button
-            onClick={handleLike}
-            disabled={likeLoading}
-            startIcon={
-              liked ? (
-                <FavoriteIcon />
-              ) : (
-                <FavoriteBorderIcon />
-              )
-            }
-            sx={{
-              flex: 1,
-              color: liked ? "#e53935" : "#666",
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 600,
-              minHeight: 42,
-              borderRadius: 2,
-            }}
-          >
-            Like
-          </Button>
+          Send
+        </Button>
+      </Stack>
 
-          <Button
-            onClick={() =>
-              setShowComments((value) => !value)
-            }
-            startIcon={<CommentIcon />}
-            sx={{
-              flex: 1,
-              color: "#666",
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 600,
-              minHeight: 42,
-              borderRadius: 2,
-            }}
-          >
-            Comment
-          </Button>
-
-          <Button
-            startIcon={<ShareIcon />}
-            sx={{
-              flex: 1,
-              color: "#666",
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 600,
-              minHeight: 42,
-              borderRadius: 2,
-            }}
-          >
-            Share
-          </Button>
-        </Stack>
-
-        {/* ERROR */}
-        {error && (
-          <Alert
-            severity="error"
-            sx={{
-              mt: 1,
-              fontSize: "12px",
-            }}
-          >
-            {error}
-          </Alert>
-        )}
-
-        {/* COMMENTS */}
-        {showComments && (
-          <Box sx={{ mt: 1.5 }}>
-            <Stack direction="row" spacing={1}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Write a comment..."
-                value={commentText}
-                onChange={(e) =>
-                  setCommentText(e.target.value)
-                }
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "Enter" &&
-                    !e.shiftKey
-                  ) {
-                    e.preventDefault();
-                    handleComment();
-                  }
-                }}
-                inputProps={{
-                  maxLength: 500,
-                }}
+      {/* COMMENTS LIST */}
+      <Stack
+        spacing={1.5}
+        sx={{
+          mt: 2,
+        }}
+      >
+        {[...post.comments]
+          .reverse()
+          .map((comment) => (
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="flex-start"
+              key={
+                comment._id ||
+                `${comment.userId}-${comment.createdAt}`
+              }
+            >
+              {/* COMMENT AVATAR */}
+              <Avatar
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "20px",
-                    backgroundColor: "#f5f5f5",
-                    fontSize: "13px",
-                  },
-                }}
-              />
-
-              <IconButton
-                onClick={handleComment}
-                disabled={
-                  !commentText.trim() ||
-                  submittingComment
-                }
-                sx={{
-                  width: 40,
-                  height: 40,
-                  bgcolor: "#3a0ca3",
-                  color: "#fff",
-                  "&:hover": {
-                    bgcolor: "#2d087f",
-                  },
-                  "&.Mui-disabled": {
-                    bgcolor: "#ddd",
-                    color: "#999",
-                  },
+                  width: 36,
+                  height: 36,
+                  flexShrink: 0,
+                  bgcolor: "#f5a623",
+                  fontSize: 14,
+                  fontWeight: 700,
                 }}
               >
-                <SendIcon fontSize="small" />
-              </IconButton>
-            </Stack>
+                {comment.username
+                  .charAt(0)
+                  .toUpperCase()}
+              </Avatar>
 
-            {/* COMMENT LIST */}
-            <Stack spacing={1.25} sx={{ mt: 2 }}>
-              {[...post.comments]
-                .reverse()
-                .map((comment) => (
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    key={
-                      comment._id ||
-                      `${comment.userId}-${comment.createdAt}`
-                    }
+              {/* COMMENT CONTENT */}
+              <Box
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
+                {/* NAME + USERNAME */}
+                <Stack
+                  direction="row"
+                  alignItems="baseline"
+                  spacing={0.75}
+                  sx={{
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "13px",
+                      fontWeight: 800,
+                      color: "#222",
+                    }}
                   >
-                    <Avatar
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        fontSize: 12,
-                        bgcolor: "#e6b325",
-                        color: "#000",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {comment.username
-                        .charAt(0)
-                        .toUpperCase()}
-                    </Avatar>
+                    {comment.username}
+                  </Typography>
 
-                    <Box
-                      sx={{
-                        flex: 1,
-                        backgroundColor: "#f3f3f3",
-                        borderRadius: "12px",
-                        px: 1.5,
-                        py: 1,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: "12px",
-                          fontWeight: 800,
-                          color: "#333",
-                        }}
-                      >
-                        {comment.username}
-                      </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      color: "#777",
+                    }}
+                  >
+                    @{comment.username}
+                  </Typography>
+                </Stack>
 
-                      <Typography
-                        sx={{
-                          fontSize: "13px",
-                          color: "#444",
-                          whiteSpace: "pre-wrap",
-                          mt: 0.25,
-                        }}
-                      >
-                        {comment.text}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                ))}
+                {/* DATE */}
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    color: "#999",
+                    lineHeight: 1.3,
+                    mt: 0.1,
+                  }}
+                >
+                  {formatDate(comment.createdAt)}
+                </Typography>
+
+                {/* COMMENT TEXT */}
+                <Typography
+                  sx={{
+                    fontSize: "13px",
+                    color: "#333",
+                    lineHeight: 1.5,
+                    mt: 0.4,
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {comment.text}
+                </Typography>
+              </Box>
             </Stack>
-          </Box>
-        )}
-      </CardContent>
+          ))}
+      </Stack>
+    </Box>
+  )}
+</CardContent>
     </Card>
   );
 }

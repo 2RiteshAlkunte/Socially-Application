@@ -63,7 +63,23 @@ export default function Feed() {
     <>
       <TopBar />
 
-      <main className="feed-shell">
+        <main
+          className="feed-shell"
+          style={{
+            width: "100%",
+            maxWidth: "440px",
+            height: "calc(100vh - 56px)",
+            margin: "0 auto",
+            padding: "0 10px 80px",
+            boxSizing: "border-box",
+            overflowY: "auto",
+            overflowX: "hidden",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#cfcfcf transparent",
+          }}
+        >
+
+        
         <Box sx={{ mb: 3 }}>
           <Typography variant="h4">Social Feed</Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5 }}>
