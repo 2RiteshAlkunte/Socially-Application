@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 console.log("Cloudinary cloud name:", process.env.CLOUDINARY_CLOUD_NAME);
 console.log("Cloudinary API key:", process.env.CLOUDINARY_API_KEY);
 console.log(
@@ -19,14 +20,26 @@ connectDB();
 
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
-  .map((origin) => origin.trim());
+  .map((origin) => origin.trim().replace(/\/$/, ""));
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests without an Origin header
+      // (for example, direct server-to-server requests)
+      if (!origin) {
         return callback(null, true);
       }
+
+      const normalizedOrigin = origin.replace(/\/$/, "");
+
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        return callback(null, true);
+      }
+
+      console.error("Blocked CORS origin:", origin);
+      console.error("Allowed origins:", allowedOrigins);
+
       return callback(new Error("CORS origin not allowed."));
     },
   })
